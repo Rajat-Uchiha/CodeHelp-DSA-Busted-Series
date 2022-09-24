@@ -1,71 +1,72 @@
-/************************************************************
-
-    Following is the linked list node structure.
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
     
-    template <typename T>
-    class Node {
-        public:
-        T data;
-        Node* next;
-
-        Node(T data) {
-            next = NULL;
-            this->data = data;
+    private:
+    ListNode* solve(ListNode* first, ListNode* second){
+        
+        //if there is only one element in list1;
+        if(first->next == NULL){
+            first->next = second;
+            return first;
         }
-
-        ~Node() {
-            if (next != NULL) {
-                delete next;
+        
+        ListNode* curr1 = first;
+        ListNode* next1 = curr1->next;
+        ListNode* curr2 = second;
+        ListNode* next2 = curr2->next;
+        
+        while(next1 != NULL && curr2 != NULL){
+            if((curr2->val >= curr1->val) && (curr2->val <= next1->val))
+            {
+                // Add node in the list
+                curr1->next = curr2;
+                next2 = curr2->next;
+                curr2->next = next1;
+                
+                //update pointers for list 2
+                curr1 = curr2;
+                curr2 = next2;
+            }
+            else{
+                // move pointers of list 1;
+                curr1 = next1;
+                next1 = next1->next;
+                if(next1 == NULL){
+                    curr1->next = curr2;
+                    return first;
+                }
             }
         }
-    };
-
-************************************************************/
-
-void solve(Node<int>* first, Node<int>* second) {
-    
-    
-    Node* curr1 = first;
-    Node* next1 = curr1 -> next;
-    
-    Node* curr2 = second;
-    Node* next2 = curr2 -> next;
-    
-    while(next1 != NULL && curr2 != NULL) {
-        
-        if( (curr2 -> data >= curr1 -> data ) 
-           && ( curr2 -> data <= next1 -> data)) {
-            
-            curr1 -> next = curr2;
-            curr2 -> next = next1;
-            curr1 = curr2;
-            curr2 = next2;
-        }
-        else {
-            
-        }
-        
-        
-    }
-    
-    
-}
-
-Node<int>* sortTwoLists(Node<int>* first, Node<int>* second)
-{
-    if(first == NULL)
-        return second;
-    
-    if(second == NULL)
         return first;
-    
-    if(first -> data <= second -> data ){
-        solve(first, second);
-    }
-    else
-    {
-        solve(second, first);
+        
+        
     }
     
-    
-}
+public:
+    ListNode* mergeTwoLists(ListNode* head1, ListNode* head2) {
+        
+        if(head1 == NULL){
+            return head2;
+        }
+        if(head2 == NULL){
+            return head1;
+        }
+        
+        if(head1->val <= head2->val){
+            return solve(head1,head2);
+        }
+        else{
+            return solve(head2,head1);
+        }
+        
+    }
+};
